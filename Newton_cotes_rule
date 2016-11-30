@@ -1,0 +1,46 @@
+def trap_wnc(N):
+    """
+    integrate cos(x)/sqrt(x) from 0 to 1 using Newton cotes rule
+    
+    Input
+    N (int): Number of partitions
+    
+    Output
+    Is (float):  integral of sin/sqrt(x)
+    Ic (float):  integral of cos/sqrt(x)
+    """
+    #set up for integration
+    x_hat = numpy.linspace(0.0, 1.0, N+1)
+    Fc= lambda x:numpy.cos(x)/numpy.sqrt(x)
+    Fs= lambda x:numpy.sin(x)/numpy.sqrt(x)
+    delta_x = x_hat[1] - x_hat[0]
+    
+    #set up for the newton cotes portion
+    w_1 = 4.0 / 3.0
+    w_2 = 2.0/3.0
+    xi_0 = 0
+    xi_1 = 1
+    
+    
+    xi_map = lambda a,b,xi : (b - a) / 2.0 * xi + (a + b) / 2.0
+
+    
+    #integrate the from 0 to delta x using netwon cotes
+    Qfc = numpy.zeros(x_hat.shape)
+    Qfc[0] =    (w_1*Fc(xi_map(x_hat[0], x_hat[1], xi_0)) + w_2* Fc(xi_map(x_hat[0], x_hat[1], xi_1))) * delta_x / 2.0
+
+    #integrate the rest using trapazoid rule
+    for i in xrange(1, N):
+        Qfc[i] = Qfc[i - 1] + (Fc(x_hat[i + 1]) + Fc(x_hat[i])) * delta_x / 2.0
+
+    Qfs = numpy.zeros(x_hat.shape)
+    Qfs[0] =    (w_1*Fs(xi_map(x_hat[0], x_hat[1], xi_0)) + w_2* Fs(xi_map(x_hat[0], x_hat[1], xi_1))) * delta_x / 2.0
+
+
+    for i in xrange(1, N):
+        Qfs[i] = Qfs[i - 1] + (Fs(x_hat[i + 1]) + Fs(x_hat[i])) * delta_x / 2.0
+    
+    Ic= Qfc[-2]
+    Is= Qfs[-2]
+    
+    return Is, Ic
