@@ -1,0 +1,39 @@
+def golden_search(bracket, t, y, max_steps=100, tolerance=1e-4):
+     """Find the maximum of the series of data using golden search algorithm 
+    
+    :Input:
+     - *bracket* (list) - a bracket in which the maximum lies
+     - *y* (list) - set of y values
+     - *t* (list) - set of t values
+     - *max_step* (int) - maximum number of steps allowed
+     - *tolerance* (float) - Stopping tolerance for iteration
+     
+    :Output:
+    If the iteration was successful the return values are:
+     - *t_star* (float) - where the maximum occurs.
+     
+    """
+
+    phi = (numpy.sqrt(5.0) - 1.0) / 2.0
+    x= [bracket[0],None,None,bracket[1]]
+    x[1] = x[3] - phi * (x[3] - x[0])
+    x[2] = x[0] + phi * (x[3] - x[0])
+
+    for n in xrange(1, max_steps + 1):
+        f_1 = linear_eval(t,y,x[1])
+        f_2 = linear_eval(t,y,x[2])
+
+        if f_1 > f_2:
+            x[3] = x[2]
+            x[2] = x[1]
+            x[1] = x[3] - phi * (x[3] - x[0])
+        else:
+            x[0] = x[1]
+            x[1] = x[2]
+            x[2] = x[0] + phi * (x[3] - x[0])
+        
+        if numpy.abs(x[3] - x[0]) < tolerance:
+            break   
+    t_star=(x[3] + x[0]) / 2.0
+    return t_star
+
