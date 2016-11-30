@@ -1,0 +1,22 @@
+import scipy.integrate as integrate
+def solve_decay_system(t, u_0, solver_type="dopri5", K_1=0.0, K_2=0.0, K_3=0.0):
+    '''
+     uses scipy.integrate to compute the solution to the system of ODEs 
+     given an initial condition and time points to output at.
+    '''
+    #define the array function
+    def f(t, u, K_1=0.0,K_2=0.0,K_3=0.0):
+        return numpy.array([-K_1*u[0], K_1*u[0]-K_2*u[1], K_2*u[1]-K_3*u[2],K_3*u[2]])
+    #set-up
+    u = numpy.empty(( t.shape[0],4))
+    u[0, :] = numpy.array([u_0[0], u_0[1], u_0[2], u_0[3]])
+    
+    #set up integrator
+    integrator = integrate.ode(f)
+    integrator.set_integrator("dopri5")
+    integrator.set_initial_value(u[0, :])
+    integrator.set_f_params(K_1,K_2,K_3)
+    for n in xrange(1,len(t)):
+        integrator.integrate(t[n])
+        u[ n ,:] = integrator.y
+    return u
