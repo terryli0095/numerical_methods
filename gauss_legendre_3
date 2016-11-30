@@ -1,0 +1,43 @@
+def gauss_legendre_3(N):
+    """
+    integrate cos(x)/sqrt(x) from 0 to 1 using 3 point Gauss Legendre
+    on a transformed function 
+    
+    Input
+    N (int): Number of partitions
+    
+    Output
+    Is (float):  integral of sin/sqrt(x)
+    Ic (float):  integral of cos/sqrt(x)
+    """
+    #wrting function and partition    
+    x_hat = numpy.linspace(0.0, 1.0, N+1)
+    Fc= lambda x:2*numpy.cos(x**2)
+    Fs= lambda x:2*numpy.sin(x**2)
+
+    #set up for Gauss-Legendre quadrature
+    delta_x = x_hat[1] - x_hat[0]
+    xi_0 = 0
+    xi_1 =  numpy.sqrt(3.0 / 5.0)
+    xi_2 =  -numpy.sqrt(3.0 / 5.0)
+    w_1 = 8.0/9.0
+    w_2 = 5.0/9.0
+    xi_map = lambda a,b,xi : (b - a) / 2.0 * xi + (a + b) / 2.0
+
+    #integrate
+    Qfc = numpy.zeros(x_hat.shape)
+    Qfc[0] = (w_1*Fc(xi_map(x_hat[0], x_hat[1], xi_0)) + w_2* Fc(xi_map(x_hat[0], x_hat[1], xi_1))+w_2*Fc(xi_map(x_hat[0], x_hat[1], xi_2))) * delta_x / 2.0
+    for i in xrange(1, N):
+        Qfc[i] = Qfc[i - 1] + (w_1*Fc(xi_map(x_hat[i], x_hat[i+1], xi_0)) + w_2*Fc(xi_map(x_hat[i], x_hat[i+1], xi_1))+w_2*Fc(xi_map(x_hat[i], x_hat[i+1], xi_2))) * delta_x / 2.0    
+
+    Qfs = numpy.zeros(x_hat.shape)
+    Qfs[0] = (w_1*Fs(xi_map(x_hat[0], x_hat[1], xi_0)) + w_2* Fs(xi_map(x_hat[0], x_hat[1], xi_1))+w_2*Fs(xi_map(x_hat[0], x_hat[1], xi_2))) * delta_x / 2.0
+    for i in xrange(1, N):
+        Qfs[i] = Qfs[i - 1] + (w_1*Fs(xi_map(x_hat[i], x_hat[i+1], xi_0)) + w_2*Fs(xi_map(x_hat[i], x_hat[i+1], xi_1))+w_2*Fs(xi_map(x_hat[i], x_hat[i+1], xi_2))) * delta_x / 2.0    
+   
+
+    Ic= Qfc[-2]
+    Is= Qfs[-2]
+  
+
+    return Is, Ic
