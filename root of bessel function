@@ -1,0 +1,47 @@
+import scipy.special
+
+# Note that the num_steps being returned should be a list 
+# of the number of steps being used in each method
+def j0_zeros(x0, bracket_tolerance, tolerance):
+        """Find the zeros of the bessel function using a combination of secant and newton's method
+    
+    :Input:
+     - *x0* (list) - initia; bracket
+     - *bracket_tolerance* (float) - tolerance for size of teh bracket
+     - *tolerance* (float) - Stopping tolerance for iteration
+     
+    :Output:
+    If the iteration was successful the return values are:
+     - *x_l* (float) - Zero found via the given intial iterate.
+     - *n* (int) - Number of iterations it took to achieve the specified
+       tolerance.
+  
+    """
+    #functions
+    f= lambda y:scipy.special.jn(0,y)
+    #parameters
+    MAX_STEPS = 100
+    
+    
+    x_km=x0[0]
+    x_k=x0[1]
+    # INSERT CODE HERE
+    if numpy.abs(f(x_k)) < tolerance:
+        return x,0
+        
+    for n in xrange(1,MAX_STEPS+1):
+        if numpy.abs(x_k - x_km > bracket_tolerance): #do secant's method until bracket becomes small enough
+            #print x_k-x_km +1000
+            x_kp = x_k - f(x_k) * (x_k-x_km) / (f(x_k) - f(x_km))
+            x_km = x_k
+            x_k = x_kp
+            continue
+            
+        x_k = x_k-f(x_k)/scipy.special.jvp(0,x_k,n=1) #newton's iteration step
+        if numpy.abs(f(x_k)) < tolerance:
+             break 
+                
+                
+    return x_k, n
+
+
