@@ -1,0 +1,89 @@
+### INSERT CODE HERE
+## Plot the Lebesgue function for  x∈[−1,1]x∈[−1,1]  for  N=5,10,20N=5,10,20  with equal distance nodes
+
+
+
+#generate x_i's
+data_5N= numpy.linspace(-1.0, 1.0, 6)
+data_10N= numpy.linspace(-1.0, 1.0, 11)
+data_20N= numpy.linspace(-1.0, 1.0, 21)
+
+#===============
+#for N=5
+#generate lagrange basis
+
+x = numpy.linspace(-1.0, 1.0, 100)
+lagrange_basis_5 = numpy.ones((len(data_5N), x.shape[0]))
+for i in xrange(len(data_5N)):
+    for j in xrange(len(data_5N)):
+        if i != j:
+            lagrange_basis_5 [i, :] *= (x - data_5N[j]) / (data_5N[i] -data_5N[j])
+
+#lebesgue function values
+            
+lebesgue_5=numpy.zeros( x.shape[0])
+for n in xrange(len(data_5N)):
+    lebesgue_5 += abs(lagrange_basis_5[n, :])
+    
+
+#===============
+#for N=10
+#generate lagrange basis
+lagrange_basis_10 = numpy.ones((len(data_10N), x.shape[0]))
+for i in xrange(len(data_10N)):
+    for j in xrange(len(data_10N)):
+        if i != j:
+            lagrange_basis_10 [i, :] *= (x - data_10N[j]) / (data_10N[i] -data_10N[j])
+
+#lebesgue function values
+           
+lebesgue_10=numpy.zeros( x.shape[0])
+for n in xrange(len(data_10N)):
+    lebesgue_10 += abs(lagrange_basis_10[n, :])
+    
+
+#=================
+#for N=20
+#generate lagrange basis
+
+lagrange_basis_20 = numpy.ones((len(data_20N), x.shape[0]))
+for i in xrange(len(data_20N)):
+    for j in xrange(len(data_20N)):
+        if i != j:
+            lagrange_basis_20 [i, :] *= (x - data_20N[j]) / (data_20N[i] -data_20N[j])
+
+#lebesgue function values
+            
+lebesgue_20=numpy.zeros( x.shape[0])
+for n in xrange(len(data_20N)):
+    lebesgue_20 += abs(lagrange_basis_20[n, :])
+
+    
+    
+    
+#graph
+fig1 = plt.figure()
+axes1 = fig1.add_subplot(1, 1, 1)
+axes1.set_title("lebesgue function with N=5")
+axes1.set_xlabel("x")
+axes1.set_ylabel("$\lambda_N(x)$")
+axes1.plot (x,lebesgue_5)
+plt.show()
+
+
+fig2 = plt.figure()
+axes2 = fig2.add_subplot(1, 1, 1)
+axes2.set_title("lebesgue function with N=5")
+axes2.set_xlabel("x")
+axes2.set_ylabel("$\lambda_N(x)$")
+axes2.plot (x,lebesgue_10)
+plt.show()
+
+fig3 = plt.figure()
+axes3 = fig3.add_subplot(1, 1, 1)
+axes3.set_title("lebesgue function with N=5")
+axes3.set_xlabel("x")
+axes3.set_ylabel("$\lambda_N(x)$")
+axes3.plot (x,lebesgue_20)
+plt.show()
+    
