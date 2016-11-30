@@ -1,0 +1,37 @@
+'''
+using a predictor-corrector method with the 3-step Adams-Bashforth as the predictor,
+and the 3-step Adams-Moulton method as the corrector. 
+Use RK2 to boot-strap (start) the method.
+'''
+#initial set up
+alfa =0.0
+beta =0.7
+f = lambda U: numpy.array([(U[0]*U[1])/(U[0]**2+U[1]**2)-alfa*beta, (U[1]**2)/(U[0]**2+U[1]**2)-beta*U[1]+beta-1])
+
+t= numpy.linspace(0,100,1000)
+delta_t= t[1]-t[0]
+U = numpy.empty((2, len(t)))
+
+#differnt ode methods
+K1 = lambda U_n, delta_t : delta_t * f(U_n)
+RK2_step = lambda U_n,  delta_t : U_n + delta_t * f(U_n + K1(U_n, delta_t) / 2.0)
+AB3=lambda U_1,U_2,U_3, delta_t : U_3+ (delta_t/12)*(5*f(U_1)-16*f(U_2)+23*f(U_3))
+AM3=lambda U_1,U_2,U_3,U_4, delta_t : U_3 +(delta_t/24.0)*(f(U_1)-5*f(U_2)+19*f(U_3)+ 9*f(U_4))
+
+#bootstraping using RK2
+U[:,0] = numpy.array([1.0, 0.0])
+U[:,1] = RK2_step(U[:,0], delta_t)
+U[:,2] = RK2_step(U[:,1], delta_t)
+
+
+for n in range(0, len(t) - 3):
+    U[:, n + 3] = AB3(U[:,n],U[:,n+1],U[:,n+2],delta_t)  #predict
+    U[:, n + 3] = AM3(U[:,n],U[:,n+1],U[:,n+2],U[:,n+3],delta_t) #correct
+
+    
+fig = plt.figure()
+axes = fig.add_subplot(1, 1, 1)
+
+axes.plot(U[0],U[1])
+axes.set_xlabel('$x$')
+axes.set_ylabel('$y$')
